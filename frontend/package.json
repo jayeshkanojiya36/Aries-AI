@@ -1,0 +1,111 @@
+{
+  "name": "Aries",
+  "version": "1.0.0",
+  "description": "Aries - React + Electron Frontend with LiveKit Vision",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "dev:full": "concurrently -n \"BACKEND,FRONTEND\" -c \"bgBlue.bold,bgMagenta.bold\" \"cross-env PYTHONIOENCODING=utf-8 python ../agent.py dev\" \"npm run dev\"",
+    "build": "vite build",
+    "postbuild": "powershell -Command \"Copy-Item 'public/Aries.ico' 'dist/Aries.ico' -Force\"",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "electron:dev": "cross-env SKIP_BACKEND_START=1 concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:dev:separate": "cross-env SKIP_BACKEND_START=1 concurrently \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:full": "concurrently -n \"BACKEND,FRONTEND,ELECTRON\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"cross-env PYTHONIOENCODING=utf-8 python ../agent.py dev\" \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "npm run build && electron-builder",
+    "package": "powershell -ExecutionPolicy Bypass -File build-app.ps1"
+  },
+  "keywords": [
+    "Aries",
+    "ai",
+    "livekit",
+    "electron",
+    "react",
+    "voice-assistant"
+  ],
+  "author": "Jayesh & Saloni",
+  "license": "MIT",
+  "dependencies": {
+    "@livekit/components-react": "^2.6.5",
+    "@livekit/components-styles": "^1.1.6",
+    "@livekit/krisp-noise-filter": "^0.3.4",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "dotenv": "^17.2.3",
+    "livekit-client": "^2.6.4",
+    "livekit-server-sdk": "^2.15.0",
+    "lucide-react": "^0.473.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.165.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.13",
+    "@types/react-dom": "^18.3.2",
+    "@vitejs/plugin-react": "^4.4.0",
+    "concurrently": "^9.2.0",
+    "cross-env": "^10.1.0",
+    "electron": "^40.0.0",
+    "electron-builder": "^26.5.0",
+    "vite": "^6.0.7",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.Aries.desktop",
+    "productName": "Aries",
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "!electron/node_modules",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asarUnpack": [
+      "resources/backend/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    }
+  }
+}

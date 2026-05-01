@@ -1,0 +1,64 @@
+python-dotenv
+google-genai
+mem0ai
+numpy
+fastapi
+pydantic
+uvicorn
+requests
+spotipy
+langchain-community
+pygetwindow
+psutil
+pyautogui
+wikipedia
+aiohttp
+pytesseract
+pillow
+opencv-python
+screen-brightness-control
+comtypes
+pycaw
+keyboard
+pandas
+plotly
+scikit-learn
+scipy
+statsmodels
+pyperclip
+mss
+pypdf
+feedparser
+playwright>=1.40.0
+pytest-playwright
+# ── Vector Memory (no Docker needed) ──────────────────
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+
+# ── Gmail API OAuth2 (Email Module) ───────────────────────────────────────────
+google-api-python-client>=2.100.0
+google-auth>=2.22.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
+
+# ── LiveKit Plugins ────────────────────────────────────────────────────
+livekit-plugins-google
+livekit-plugins-silero
+livekit-plugins-noise-cancellation
+
+# ── Google Generative AI (Gemini) ──────────────────────────────────────
+google-generativeai
+
+# ── PDF & Document Processing ──────────────────────────────────────────
+PyPDF2
+python-docx
+chardet
+
+# ── Excel / Office ────────────────────────────────────────────────────
+openpyxl
+
+# ── Windows COM Automation (word_to_pdf) ──────────────────────────────
+pywin32
+
+# ── News API ──────────────────────────────────────────────────────────
+newsapi-python

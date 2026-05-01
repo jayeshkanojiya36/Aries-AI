@@ -1,0 +1,194 @@
+.app {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+}
+
+.livekit-room {
+    width: 100%;
+    height: 100%;
+}
+
+/* Setup Screen */
+.setup-screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.setup-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    border-radius: 24px;
+    padding: 48px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 170, 255, 0.2);
+    animation: slideUp 0.5s ease;
+}
+
+.setup-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.Aries-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.logo-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF3333 0%, #0088cc 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.logo-circle.glow {
+    box-shadow: 0 0 40px rgba(0, 170, 255, 0.6);
+}
+
+.setup-header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FF3333 0%, #00ffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 8px 0;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 16px;
+    margin: 0;
+}
+
+.setup-content {
+    text-align: center;
+}
+
+.welcome-message,
+.reconnect-message {
+    margin-bottom: 24px;
+}
+
+.welcome-message p,
+.reconnect-message p {
+    color: #aaa;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.settings-button,
+.connect-button {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 8px;
+}
+
+.settings-button.primary,
+.connect-button.primary {
+    background: linear-gradient(135deg, #FF3333 0%, #0088cc 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 170, 255, 0.4);
+}
+
+.settings-button.primary:hover,
+.connect-button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 170, 255, 0.6);
+}
+
+.settings-button.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #FF3333;
+    border: 1px solid rgba(0, 170, 255, 0.3);
+}
+
+.settings-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #FF3333;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(0, 170, 255, 0.2);
+    border-top-color: #FF3333;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+.loading-state p {
+    color: #FF3333;
+    font-size: 14px;
+}
+
+.error-message {
+    background: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff6b6b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

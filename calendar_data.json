@@ -1,0 +1,94 @@
+{
+  "personal": {},
+  "office": {
+    "2026-01-15": {
+      "title": "Team Meeting",
+      "time": "17:00",
+      "description": "Sprint planning session",
+      "created_at": "2026-01-14T14:21:18.691159",
+      "updated_at": "2026-01-14T14:21:18.724350"
+    }
+  },
+  "holiday": {
+    "2026-01-14": {
+      "title": "Makar Sankranti",
+      "description": "Harvest festival celebrated across India"
+    },
+    "2026-01-26": {
+      "title": "Republic Day",
+      "description": "National holiday celebrating the Constitution of India"
+    },
+    "2026-03-03": {
+      "title": "Maha Shivaratri",
+      "description": "Hindu festival dedicated to Lord Shiva"
+    },
+    "2026-03-06": {
+      "title": "Holi",
+      "description": "Festival of colors"
+    },
+    "2026-03-25": {
+      "title": "Good Friday",
+      "description": "Christian holiday"
+    },
+    "2026-04-02": {
+      "title": "Ram Navami",
+      "description": "Birthday of Lord Rama"
+    },
+    "2026-04-06": {
+      "title": "Mahavir Jayanti",
+      "description": "Jain festival"
+    },
+    "2026-04-14": {
+      "title": "Ambedkar Jayanti",
+      "description": "Birthday of Dr. B.R. Ambedkar"
+    },
+    "2026-05-01": {
+      "title": "May Day",
+      "description": "International Workers' Day"
+    },
+    "2026-05-26": {
+      "title": "Buddha Purnima",
+      "description": "Birthday of Gautama Buddha"
+    },
+    "2026-07-07": {
+      "title": "Rath Yatra",
+      "description": "Chariot festival of Lord Jagannath"
+    },
+    "2026-08-15": {
+      "title": "Independence Day",
+      "description": "National holiday celebrating India's independence"
+    },
+    "2026-08-22": {
+      "title": "Raksha Bandhan",
+      "description": "Festival celebrating brother-sister bond"
+    },
+    "2026-08-31": {
+      "title": "Janmashtami",
+      "description": "Birthday of Lord Krishna"
+    },
+    "2026-09-11": {
+      "title": "Ganesh Chaturthi",
+      "description": "Birthday of Lord Ganesha"
+    },
+    "2026-10-02": {
+      "title": "Gandhi Jayanti",
+      "description": "Birthday of Mahatma Gandhi"
+    },
+    "2026-10-15": {
+      "title": "Dussehra",
+      "description": "Victory of good over evil"
+    },
+    "2026-10-24": {
+      "title": "Diwali",
+      "description": "Festival of lights"
+    },
+    "2026-11-04": {
+      "title": "Guru Nanak Jayanti",
+      "description": "Birthday of Guru Nanak Dev Ji"
+    },
+    "2026-12-25": {
+      "title": "Christmas",
+      "description": "Christian holiday celebrating birth of Jesus Christ"
+    }
+  }
+}

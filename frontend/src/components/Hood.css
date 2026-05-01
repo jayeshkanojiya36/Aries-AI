@@ -1,0 +1,19 @@
+/* Container to center everything */
+.Aries-hood-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: transparent;
+    overflow: hidden;
+}
+
+/* Wrapper for the Canvas to ensure it takes correct space */
+.canvas-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
