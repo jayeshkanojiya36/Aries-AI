@@ -1,6 +1,9 @@
 from dotenv import load_dotenv
+import os
 import warnings
 from typing import AsyncIterable
+
+load_dotenv()
 
 # Suppress deprecation and pydantic warnings for cleaner output
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -19,12 +22,30 @@ from google.genai.types import Modality
 from prompts import AGENT_INSTRUCTION, SESSION_INSTRUCTION, AGENT_INSTRUCTION_FOR_TOOLS
 from mem0 import AsyncMemoryClient
 from livekit import rtc
-import os
 import json
 import logging
 import asyncio
 
-load_dotenv()
+GOOGLE_REALTIME_MODEL = os.getenv("GOOGLE_REALTIME_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025")
+GOOGLE_REALTIME_VOICE = os.getenv("GOOGLE_REALTIME_VOICE", "Aoede")
+GOOGLE_REALTIME_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_REALTIME_USE_VERTEXAI = os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "0").lower() in ("1", "true")
+GOOGLE_REALTIME_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
+GOOGLE_REALTIME_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+GOOGLE_REALTIME_VIDEO_INPUT = os.getenv("GOOGLE_REALTIME_VIDEO_INPUT", "0").lower() in ("1", "true")
+
+if not GOOGLE_REALTIME_API_KEY and not GOOGLE_REALTIME_USE_VERTEXAI:
+    logging.warning(
+        "Google Realtime model configured without GOOGLE_API_KEY and without VertexAI. "
+        "Set GOOGLE_API_KEY or enable VertexAI via GOOGLE_GENAI_USE_VERTEXAI=1."
+    )
+
+if GOOGLE_REALTIME_VIDEO_INPUT:
+    logging.warning(
+        "GOOGLE_REALTIME_VIDEO_INPUT is enabled. "
+        "Gemini Realtime audio-only models may reject unsupported video operations. "
+        "Set GOOGLE_REALTIME_VIDEO_INPUT=0 unless you are using a video-capable realtime model."
+    )
 
 from Tools.reminder import set_reminder, view_reminders, cancel_reminder
 from Tools.manage_windows import manage_window,list_windows
@@ -91,9 +112,13 @@ class Assistant(Agent):
         super().__init__(
             instructions=AGENT_INSTRUCTION + "\n\n" + AGENT_INSTRUCTION_FOR_TOOLS,
             llm=google.realtime.RealtimeModel(
-                model="gemini-2.5-flash-native-audio-preview-12-2025",
-                voice="Aoede",
+                model=GOOGLE_REALTIME_MODEL,
+                api_key=GOOGLE_REALTIME_API_KEY,
+                voice=GOOGLE_REALTIME_VOICE,
                 temperature=0.7,
+                vertexai=GOOGLE_REALTIME_USE_VERTEXAI,
+                project=GOOGLE_REALTIME_PROJECT,
+                location=GOOGLE_REALTIME_LOCATION,
                 # Video input is enabled via RoomOptions.video_input=True (see entrypoint function)
                 # The modalities parameter only accepts AUDIO for Gemini Realtime
                 modalities=[Modality.AUDIO],
@@ -203,11 +228,12 @@ class Assistant(Agent):
 
 async def entrypoint(ctx: agents.JobContext):
 
-    async def periodic_memory_saver(chat_ctx: ChatContext, mem0: AsyncMemoryClient, memory_str: str, user_name: str):
+    async def periodic_memory_saver(session: AgentSession, mem0: AsyncMemoryClient, user_name: str):
         last_processed_index = 0
         while True:
             await asyncio.sleep(60)
-            items = chat_ctx.items
+            items = session.history.items
+            logging.debug(f"[MEMORY] history items={len(items)} last_processed_index={last_processed_index}")
             if last_processed_index >= len(items):
                 continue
 
@@ -216,22 +242,33 @@ async def entrypoint(ctx: agents.JobContext):
                 # Skip items without content attribute (like FunctionCall)
                 if not hasattr(item, 'content'):
                     continue
-                    
-                content_str = ''.join(item.content) if isinstance(item.content, list) else str(item.content)
 
-                if memory_str and memory_str in content_str:
+                if getattr(item, 'type', None) != 'message':
+                    continue
+
+                content_str = None
+                if hasattr(item, 'text_content') and item.text_content:
+                    content_str = item.text_content
+                elif isinstance(item.content, list):
+                    content_str = ''.join(str(part) for part in item.content)
+                else:
+                    content_str = str(item.content)
+
+                content_str = content_str.strip()
+                if not content_str:
                     continue
 
                 if item.role in ['user', 'assistant']:
                     messages_formatted.append({
                         "role": item.role,
-                        "content": content_str.strip()
+                        "content": content_str,
                     })
 
             last_processed_index = len(items)
 
             if messages_formatted:
                 logging.info(f"Saving {len(messages_formatted)} new messages to memory periodically...")
+                logging.debug(f"[MEMORY] payload={messages_formatted}")
                 try:
                     await mem0.add(messages_formatted, user_id=user_name)
                     logging.info("Chat context saved to memory successfully.")
@@ -291,10 +328,9 @@ async def entrypoint(ctx: agents.JobContext):
             noise_cancellation=noise_cancellation.NC(),
         ),
         room_options=room_io.RoomOptions(
-            # Enable live video input for Gemini Realtime model
-            # The agent will automatically receive frames from camera or screen sharing
-            # Default: 1 frame/sec while user speaks, 1 frame/3sec otherwise
-            video_input=True,
+            # Live video input is disabled by default because Gemini Realtime audio-only models
+            # can return operation-not-supported errors when video streams are enabled.
+            video_input=GOOGLE_REALTIME_VIDEO_INPUT,
             text_input=room_io.TextInputOptions(
                 text_input_cb=handle_text_input
             ),
@@ -303,6 +339,10 @@ async def entrypoint(ctx: agents.JobContext):
             )
         ),
     )
+
+    # Start the background task to save memory every minute before entering the LiveKit connect loop.
+    memory_task = asyncio.create_task(periodic_memory_saver(session, mem0, user_name))
+    logging.info("[MEMORY] Started periodic memory saver task")
 
     await ctx.connect()
 
@@ -316,9 +356,6 @@ async def entrypoint(ctx: agents.JobContext):
     set_top_news_room_context(ctx.room)
     logging.info("[PLAY_SONG] Room context initialized for media playback")
     logging.info("[NEWS] Room context initialized for news broadcasts")
-
-    # Start the background task to save memory every minute
-    memory_task = asyncio.create_task(periodic_memory_saver(initial_ctx, mem0, memory_str, user_name))
 
     try:
         logging.info("[AUDIO] Generating initial greeting...")

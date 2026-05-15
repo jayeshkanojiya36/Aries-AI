@@ -1,0 +1,23 @@
+class ChatMessage(BaseModel):
+    id: str = Field(default_factory=lambda: utils.shortuuid("item_"))
+    type: Literal["message"] = "message"
+    role: ChatRole
+    content: list[ChatContent]
+    interrupted: bool = False
+    transcript_confidence: float | None = None
+    extra: dict[str, Any] = Field(default_factory=dict)
+    metrics: MetricsReport = Field(default_factory=lambda: MetricsReport())
+    created_at: float = Field(default_factory=time.time)
+    hash: bytes | None = Field(default=None, deprecated="hash is deprecated")
+
+    @property
+    def text_content(self) -> str | None:
+        """
+        Returns a string of all text content in the message.
+
+        Multiple text content items will be joined by a newline.
+        """
+        text_parts = [c for c in self.content if isinstance(c, str)]
+        if not text_parts:
+            return None
+        return "\n".join(text_parts)
